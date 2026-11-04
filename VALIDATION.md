@@ -1,3 +1,11 @@
+# v2.1.0 附件驗證（2026-11-04）
+- Node 回歸測試 12 項：附件驗證、DOCX/PPTX/XLSX 文字及資料、實際 PDF 文字與 needs-ocr、損壞附件隔離、HTTP 保存原檔，以及既有需求/PPTX 檢查。
+- Edge headless 實際操作：填表、多檔選取、圖片預覽節點、用途選擇、確認摘要、ZIP 下載與原檔 bytes 比對、本機工作送出與 parsed/visual-pending 狀態；無 pageerror。
+- 本機工作測試刻意使用不存在的 Codex 執行檔，以驗證附件保存與啟動錯誤，不消耗模型用量；這不代表 AI 已根據附件完成簡報。
+- 文字 PDF 實際擷取成功；空白 PDF 標示 needs-ocr。未實作 OCR、自動 Office 版面還原及原生互動轉換。
+- npm audit 在本機暫存乾淨依賴副本回報 0 vulnerabilities。
+- 雲端硬碟 node_modules 寫入遭 EBADF，改於本機暫存安裝驗證；沒有刪除使用者檔案。
+
 # v2.0.2 乾淨安裝驗證（2026-11-04）
 已將 JSZip 宣告對齊既有鎖檔 3.10.2。在全新本機暫存目錄執行 npm ci --ignore-scripts，成功安裝 22 個套件；以該目錄的依賴重跑七項 Node 測試，全部通過。以下保留自動製作、PowerPoint 修正與歷史驗證紀錄。
 

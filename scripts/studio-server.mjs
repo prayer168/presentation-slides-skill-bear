@@ -1,3 +1,5 @@
+import {saveAttachments} from './attachments.mjs';
+import {attachmentMetadata} from '../ui/attachments.mjs';
 import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -12,17 +14,18 @@ const token=crypto.randomBytes(32).toString('hex'),jobs=new Map();
 const outputRoot=path.resolve(process.env.BEAR_OUTPUT_DIR||path.join(root,'output'));
 const codex=process.env.CODEX_BIN||'codex';
 let active=null;
-const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.md':'text/plain; charset=utf-8'};
+const mime={'.js':'text/javascript; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.md':'text/plain; charset=utf-8'};
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data))}
 function allowed(req,url){return req.headers['x-bear-token']===token||url.searchParams.get('token')===token}
-async function body(req){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>150000)throw Error('需求資料過大');chunks.push(chunk)}return JSON.parse(Buffer.concat(chunks).toString('utf8'))}
-async function snapshot(job){let files=[];try{files=(await fs.readdir(job.dir,{withFileTypes:true})).filter(e=>e.isFile()&&!['events.jsonl','stderr.log'].includes(e.name)).map(e=>e.name)}catch{}return {id:job.id,status:job.status,error:job.error,message:job.message,outputDirectory:job.dir,files}}
+async function body(req){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>43*1024*1024)throw Error('需求資料過大');chunks.push(chunk)}return JSON.parse(Buffer.concat(chunks).toString('utf8'))}
+async function snapshot(job){let files=[];try{files=(await fs.readdir(job.dir,{withFileTypes:true})).filter(e=>e.isFile()&&!['events.jsonl','stderr.log'].includes(e.name)).map(e=>e.name)}catch{}return {id:job.id,status:job.status,error:job.error,message:job.message,outputDirectory:job.dir,files,attachments:job.attachments}}
 async function startJob(r){
  const id=crypto.randomUUID(),dir=path.join(outputRoot,id);await fs.mkdir(dir,{recursive:true});
- await fs.writeFile(path.join(dir,'bear-request.json'),JSON.stringify(r,null,2));
+ await fs.writeFile(path.join(dir,'bear-request.json'),JSON.stringify({...r,attachments:attachmentMetadata(r.attachments)},null,2));
+ const attachmentReport=await saveAttachments(dir,r.attachments);
  const prompt=buildPrompt(r,styles,path.join(root,'SKILL.md'));
  await fs.writeFile(path.join(dir,'bear-prompt.md'),prompt);
- const job={id,dir,status:'running',message:'Codex 正在製作；完成後仍須查看驗收結果。'};jobs.set(id,job);active=id;
+ const job={id,dir,attachments:attachmentReport.map(({text,...a})=>a),status:'running',message:'Codex 正在製作；完成後仍須查看驗收結果。'};jobs.set(id,job);active=id;
  const args=['exec','--json','--approve-for-me','--skip-git-repo-check','-C',dir,'-o',path.join(dir,'agent-result.md'),'-'];
  let turnFailed=false,finished=false,events='',stderr='';
  const child=spawn(codex,args,{shell:false,windowsHide:true,stdio:['pipe','pipe','pipe']});
@@ -58,7 +61,7 @@ const server=http.createServer(async(req,res)=>{try{
   if(url.pathname==='/api/jobs'&&req.method==='POST'){
    if(req.headers['content-type']!=='application/json'){json(res,415,{error:'需要 application/json'});return}
    if(active){json(res,409,{error:'已有一個工作正在執行，請等待完成。'});return}
-   let r;try{r=validateRequest(await body(req),styles)}catch(e){json(res,400,{error:e.message});return}
+   active='receiving';let r;try{r=validateRequest(await body(req),styles)}catch(e){active=null;json(res,400,{error:e.message});return}
    // Reserve before awaiting filesystem work so simultaneous submissions cannot both start.
    active='starting';try{const job=await startJob(r);json(res,202,{id:job.id,status:job.status})}catch(e){active=null;throw e}return;
   }

@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {mkdtemp} from 'node:fs/promises';
+import {mkdtemp,readFile} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -19,8 +19,10 @@ test('local bridge rejects foreign origin and invalid requests, and reports spaw
   assert.equal((await fetch(origin+'/ui/%2e%2e/%2e%2e/package.json')).status,404);
   assert.equal((await fetch(origin+'/ui/%2e%2e%2fpackage.json')).status,403);
   const request={format:'html',purpose:'一般分享',audience:'一般大眾',subject:'語文',topic:'讀書分享',goal:'比較兩個觀點',style:'minimal',density:'speaker',interaction:'none',notes:'',materials:'',pages:1,minutes:3};
+  request.attachments=[{name:'教材.txt',size:6,use:'content',data:Buffer.from('教材').toString('base64')}];
   const submitted=await fetch(origin+'/api/jobs',{method:'POST',headers,body:JSON.stringify(request)});assert.equal(submitted.status,202);const {id}=await submitted.json();
   let job;for(let i=0;i<30;i++){job=await fetch(origin+'/api/jobs/'+id,{headers}).then(r=>r.json());if(job.status!=='running')break;await new Promise(r=>setTimeout(r,100));}
+  assert.equal(job.attachments[0].status,'parsed');assert.equal(await readFile(path.join(output,id,'attachments/01.txt'),'utf8'),'教材');
   assert.equal(job.status,'failed');assert(job.error.includes('無法啟動'));assert(job.files.includes('bear-request.json'));assert(!job.files.includes('stderr.log'));
   const download=await fetch(origin+'/api/jobs/'+id+'/files/bear-request.json',{headers});assert.equal(download.status,200);assert.equal((await download.json()).topic,'讀書分享');
  }finally{child.kill();}

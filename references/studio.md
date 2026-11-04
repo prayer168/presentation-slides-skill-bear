@@ -1,7 +1,7 @@
 # 操作與 agent 交接
 ## 啟動
 在本機技能目錄執行 `npm start`（等同 `node scripts/studio-server.mjs`），瀏覽 http://127.0.0.1:4318/ui/ 。伺服器只綁定 127.0.0.1，不要改為公開網路服務。
-首次使用先安裝依賴 `npm ci --ignore-scripts`。表單與風格圖庫無第三方前端依賴；檢查與 PPTX 工具才需要 npm 依賴。
+首次使用先安裝依賴 `npm ci --ignore-scripts`。表單風格圖庫可離線讀取；附件 ZIP 使用內附 JSZip（授權在 ui/vendor/），本機解析與 PPTX 工具需要 npm 依賴。
 需已有可執行的 Codex CLI 與有效登入。`CODEX_BIN` 可指定 .exe 或原生可執行檔；不透過 shell 執行，不使用 .cmd 作為自訂指令。Windows 可從 Get-Command codex 查找 .exe。
 
 ## 送出
@@ -13,7 +13,7 @@
 
 ## 本機邊界
 要求同來源、嚴格 Host、隨機 session token、JSON body、大小與欄位驗證；無任意指令或任意輸出路徑的 HTTP 參數。僅可下載指定工作目錄的第一層普通檔案，不提供事件及 stderr 下載。
-靜態 GitHub Pages 版本只有通用匯出，不會連到使用者的 localhost 或存取本機檔案。素材只接受文字檔或貼上文字與網址，不會把檔名誤當成已上傳完整 PDF／PPTX。大型附件請在 agent 對話直接提供。
+靜態 GitHub Pages 版本只有通用匯出，不會連到使用者的 localhost 或存取本機檔案。支援圖片、PDF、Office、CSV 與文字附件；通用模式匯出含原檔 ZIP，本機模式會保存原檔並解析。限制與狀態詳見 [附件處理](attachments.md)。
 
 ## 本機實測紀錄（2026-11-04）
 v2.0.0 的嚴格模式受 Windows 沙箱初始化失敗阻擋，原始失敗紀錄保留於 VALIDATION.md。
