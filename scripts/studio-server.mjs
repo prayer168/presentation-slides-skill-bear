@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {validateRequest,buildPrompt} from '../ui/request.mjs';
+import {validateRequest,buildPrompt,presentationFiles} from '../ui/request.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const styles=JSON.parse(await fs.readFile(path.join(root,'ui/styles.json'),'utf8'));
 const host='127.0.0.1',port=Number(process.env.BEAR_PORT||4318),origin=`http://${host}:${port}`;
@@ -21,14 +21,14 @@ const mime={'.js':'text/javascript; charset=utf-8','.html':'text/html; charset=u
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data))}
 function allowed(req,url){return req.headers['x-bear-token']===token||url.searchParams.get('token')===token}
 async function body(req){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>43*1024*1024)throw Error('需求資料過大');chunks.push(chunk)}return JSON.parse(Buffer.concat(chunks).toString('utf8'))}
-async function snapshot(job){let files=[];try{files=(await fs.readdir(job.dir,{withFileTypes:true})).filter(e=>e.isFile()&&!['events.jsonl','stderr.log'].includes(e.name)).map(e=>e.name)}catch{}return {id:job.id,status:job.status,error:job.error,message:job.message,outputDirectory:job.dir,files,attachments:job.attachments}}
+async function snapshot(job){let files=[];try{files=(await fs.readdir(job.dir,{withFileTypes:true})).filter(e=>e.isFile()&&!['events.jsonl','stderr.log'].includes(e.name)).map(e=>e.name)}catch{}return {id:job.id,status:job.status,error:job.error,message:job.message,outputDirectory:job.dir,files,presentations:presentationFiles(job.format).filter(file=>files.includes(file)).map(file=>({file,path:path.join(job.dir,file)})),attachments:job.attachments}}
 async function startJob(r){
  const id=crypto.randomUUID(),dir=path.join(outputRoot,id);await fs.mkdir(dir,{recursive:true});
  await fs.writeFile(path.join(dir,'bear-request.json'),JSON.stringify({...r,attachments:attachmentMetadata(r.attachments)},null,2));
  const attachmentReport=await saveAttachments(dir,r.attachments);
  const prompt=buildPrompt(r,styles,path.join(root,'SKILL.md'));
  await fs.writeFile(path.join(dir,'bear-prompt.md'),prompt);
- const job={id,dir,attachments:attachmentReport.map(({text,...a})=>a),status:'running',message:'Codex 正在製作；完成後仍須查看驗收結果。'};jobs.set(id,job);active=id;
+ const job={id,dir,format:r.format,attachments:attachmentReport.map(({text,...a})=>a),status:'running',message:'Codex 正在製作；完成後仍須查看驗收結果。'};jobs.set(id,job);active=id;
  const args=['exec','--json','--approve-for-me','--skip-git-repo-check','-C',dir,'-o',path.join(dir,'agent-result.md'),'-'];
  let turnFailed=false,finished=false,events='',stderr='';
  const child=spawn(codex,[...codexPrefix,...args],{shell:false,windowsHide:true,stdio:['pipe','pipe','pipe']});
@@ -37,12 +37,17 @@ async function startJob(r){
  child.stderr.on('data',chunk=>{stderr+=chunk.toString();if(stderr.length>20000)stderr=stderr.slice(-20000)});
  async function finish(code,error){if(finished)return;finished=true;clearTimeout(timer);
   for(const line of events.split(/\r?\n/)){try{const event=JSON.parse(line);if(event.type==='turn.failed'||event.type==='error')turnFailed=true}catch{}}
-  const expected=path.join(dir,'presentation.'+r.format);let exists=false;try{exists=(await fs.stat(expected)).size>0}catch{}
+  const missing=[];
+  for(const file of presentationFiles(r.format)){
+   const stat=await fs.lstat(path.join(dir,file)).catch(()=>null);
+   if(!stat?.isFile()||!stat.size)missing.push(file);
+  }
+  const expected=path.join(dir,'presentation.pptx');
   let integrityError='';
-  if(exists&&r.format==='pptx'){try{const {default:checker}=await import('./pptx-integrity.cjs');const report=await checker.inspectPptx(expected);await fs.writeFile(path.join(dir,'pptx-integrity.json'),JSON.stringify(report,null,2));if(!report.valid)integrityError='PPTX 結構檢查失敗：'+report.errors.join('; ');}catch(e){integrityError='PPTX 無法驗證：'+e.message;}}
-  const finalStatus=!error&&code===0&&!turnFailed&&exists&&!integrityError?'completed':'failed';
+  if(r.format!=='html'&&!missing.includes('presentation.pptx')){try{const {default:checker}=await import('./pptx-integrity.cjs');const report=await checker.inspectPptx(expected);await fs.writeFile(path.join(dir,'pptx-integrity.json'),JSON.stringify(report,null,2));if(!report.valid)integrityError='PPTX 結構檢查失敗：'+report.errors.join('; ');}catch(e){integrityError='PPTX 無法驗證：'+e.message;}}
+  const finalStatus=!error&&code===0&&!turnFailed&&!missing.length&&!integrityError?'completed':'failed';
   let detail='';try{detail=(await fs.readFile(path.join(dir,'agent-result.md'),'utf8')).slice(0,1200)}catch{}
-  job.error=finalStatus==='failed'?(error||integrityError||(!exists?'未產生 presentation.'+r.format+'。'+(detail||('Codex 結束代碼 '+code+'；請查看本機工作目錄的 stderr.log。')):'Codex 工作失敗，請查看工作紀錄。')):undefined;
+  job.error=finalStatus==='failed'?(error||integrityError||(missing.length?'未產生 '+missing.join('、')+'。'+(detail||('Codex 結束代碼 '+code+'；請查看本機工作目錄的 stderr.log。')):'Codex 工作失敗，請查看工作紀錄。')):undefined;
   job.message=finalStatus==='completed'?'已產生成品，請查看 agent-result.md 的驗收範圍後下載。':undefined;
   await fs.writeFile(path.join(dir,'events.jsonl'),events);await fs.writeFile(path.join(dir,'stderr.log'),stderr);
   job.status=finalStatus;
@@ -52,7 +57,7 @@ async function startJob(r){
  child.on('error',e=>void finish(null,'無法啟動 Codex：'+e.message+'。請確認 codex login 與 CODEX_BIN 設定。'));
  child.on('close',code=>void finish(code));child.stdin.on('error',()=>{});
  job.cancel=async()=>{const done=finish(null,'工作已由驗收流程停止；現有檔案保留。');child.kill();await done;};
- child.stdin.end(prompt+'\n最終簡報主檔必須命名為 presentation.'+r.format+'。');
+ child.stdin.end(prompt);
  return job;
 }
 const server=http.createServer(async(req,res)=>{try{

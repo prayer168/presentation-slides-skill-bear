@@ -33,3 +33,38 @@ test('local bridge can stop its test job without deleting existing files',async(
  const child=spawn(process.execPath,[fileURLToPath(new URL('../scripts/studio-server.mjs',import.meta.url))],{env:{...process.env,BEAR_PORT:String(port),BEAR_OUTPUT_DIR:output,CODEX_BIN:process.execPath,CODEX_PREFIX_ARGS:JSON.stringify([fileURLToPath(new URL('./fixtures/wait-agent.mjs',import.meta.url))])},windowsHide:true});
  try{await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error('startup timeout')),10000);child.stdout.once('data',()=>{clearTimeout(t);resolve()});child.once('error',reject)});const session=await fetch(origin+'/api/session').then(r=>r.json());const headers={'Content-Type':'application/json','X-Bear-Token':session.token};const request={format:'html',purpose:'一般分享',audience:'一般大眾',subject:'語文',topic:'取消測試',goal:'保留檔案',style:'minimal',density:'speaker',interaction:'none',notes:'',materials:'',pages:1,minutes:3};const submitted=await fetch(origin+'/api/jobs',{method:'POST',headers,body:JSON.stringify(request)}).then(r=>r.json());const stopped=await fetch(origin+'/api/jobs/'+submitted.id+'/cancel',{method:'POST',headers}).then(r=>r.json());assert.equal(stopped.status,'failed');assert(stopped.error.includes('停止'));assert((await readFile(path.join(output,submitted.id,'bear-request.json'),'utf8')).includes('取消測試'));}finally{child.kill()}
 });
+test('dual-format job fails when only HTML exists and exposes its path and download',async()=>{
+ const port=4340,origin='http://127.0.0.1:'+port;
+ const output=await mkdtemp(path.join(os.tmpdir(),'bear-both-test-'));
+ const driver="require('node:fs').writeFileSync(require('node:path').join(process.argv[process.argv.indexOf('-C')+1],'presentation.html'),'<!doctype html>')";
+ const child=spawn(process.execPath,[fileURLToPath(new URL('../scripts/studio-server.mjs',import.meta.url))],{
+  env:{...process.env,BEAR_PORT:String(port),BEAR_OUTPUT_DIR:output,CODEX_BIN:process.execPath,
+   CODEX_PREFIX_ARGS:JSON.stringify(['-e',driver,'--'])},windowsHide:true
+ });
+ try{
+  await new Promise((resolve,reject)=>{
+   const timeout=setTimeout(()=>reject(Error('Server startup timeout')),10000);
+   child.stdout.once('data',()=>{clearTimeout(timeout);resolve()});
+   child.once('error',reject);
+  });
+  const {token}=await fetch(origin+'/api/session').then(r=>r.json());
+  const headers={'Content-Type':'application/json','X-Bear-Token':token};
+  const request={format:'both',purpose:'一般分享',audience:'一般大眾',subject:'語文',topic:'讀書分享',goal:'比較兩個觀點',style:'minimal',density:'speaker',interaction:'none',notes:'',materials:'',pages:1,minutes:3};
+  const submitted=await fetch(origin+'/api/jobs',{method:'POST',headers,body:JSON.stringify(request)});
+  assert.equal(submitted.status,202);
+  const {id}=await submitted.json();
+  const url=origin+'/api/jobs/'+id;
+  let job;
+  for(let i=0;i<30;i++){
+   job=await fetch(url,{headers}).then(r=>r.json());
+   if(job.status!=='running')break;
+   await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  assert.equal(job.status,'failed');
+  assert.match(job.error,/presentation\.pptx/);
+  assert.deepEqual(job.presentations,[{file:'presentation.html',path:path.join(output,id,'presentation.html')}]);
+  const download=await fetch(url+'/files/presentation.html?token='+token);
+  assert.equal(download.status,200);
+  assert.equal(await download.text(),'<!doctype html>');
+ }finally{child.kill();}
+});

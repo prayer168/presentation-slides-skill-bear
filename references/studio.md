@@ -8,7 +8,7 @@
 通用模式產生 bear-request.json 與 bear-prompt.md，不會假裝已交給 agent。可貼到任一工具或請工具讀檔；不能直接啟動目前桌面聊天。
 勾選本機 Codex 模式後，POST 工作，由 codex exec 讀 stdin，使用 workspace-write 沙箱及現有模型設定。使用者已明確授權本機橋接使用 --approve-for-me。該旗標已包含 workspace-write 沙箱設定，不能再與 --sandbox 併用：必要的權限請求交由 Codex 自動審核；仍保留 workspace-write 沙箱，不使用繞過核准或沙箱的旗標。若審核拒絕、登入失敗或環境問題無法修復，如實回報，不繞過。
 每次工作建立獨立 output/<UUID>/；使用 BEAR_OUTPUT_DIR 可設定本機輸出位置，BEAR_PORT 可換連接埠。UI 顯示狀態與下載檔案；工作超過 30 分鐘會停止程序並保留檔案。
-成功需程序正常結束、無 turn.failed，且存在 presentation.html 或 presentation.pptx；視覺驗收結果仍以 agent-result.md 為準，不能把產檔當成驗收全通過。
+成功需程序正常結束、無 turn.failed，且所選格式的主檔都已產生（`presentation.html`、`presentation.pptx` 或兩者）；視覺驗收結果仍以 agent-result.md 為準，不能把產檔當成驗收全通過。
 最多同時一項工作，重複送出回 409。關閉伺服器前先等工作完成；狀態只存記憶體，重啟後由本機 output 找回檔案，不刪舊檔。
 
 ## 本機邊界
