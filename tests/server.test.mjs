@@ -11,7 +11,7 @@ test('local bridge rejects foreign origin and invalid requests, and reports spaw
  const child=spawn(process.execPath,[fileURLToPath(new URL('../scripts/studio-server.mjs',import.meta.url))],{env:{...process.env,BEAR_PORT:String(port),BEAR_OUTPUT_DIR:output,CODEX_BIN:path.join(output,'missing-codex.exe')},windowsHide:true});
  try{
   await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error('Server startup timeout')),10000);child.stdout.once('data',()=>{clearTimeout(t);resolve()});child.once('error',reject)});
-  const session=await fetch(origin+'/api/session').then(r=>r.json());assert(session.token);
+  const session=await fetch(origin+'/api/session').then(r=>r.json());assert(session.token);assert.equal(session.approvalMode,'auto-review');
   assert.equal((await fetch(origin+'/api/session',{headers:{Origin:'https://example.com'}})).status,403);
   assert.equal((await fetch(origin+'/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,403);
   const headers={'Content-Type':'application/json','X-Bear-Token':session.token};

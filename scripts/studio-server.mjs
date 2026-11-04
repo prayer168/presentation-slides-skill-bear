@@ -23,7 +23,7 @@ async function startJob(r){
  const prompt=buildPrompt(r,styles,path.join(root,'SKILL.md'));
  await fs.writeFile(path.join(dir,'bear-prompt.md'),prompt);
  const job={id,dir,status:'running',message:'Codex 正在製作；完成後仍須查看驗收結果。'};jobs.set(id,job);active=id;
- const args=['exec','--json','--sandbox','workspace-write','-c','approval_policy="never"','--skip-git-repo-check','-C',dir,'-o',path.join(dir,'agent-result.md'),'-'];
+ const args=['exec','--json','--approve-for-me','--skip-git-repo-check','-C',dir,'-o',path.join(dir,'agent-result.md'),'-'];
  let turnFailed=false,finished=false,events='',stderr='';
  const child=spawn(codex,args,{shell:false,windowsHide:true,stdio:['pipe','pipe','pipe']});
  job.child=child;
@@ -32,9 +32,11 @@ async function startJob(r){
  async function finish(code,error){if(finished)return;finished=true;clearTimeout(timer);
   for(const line of events.split(/\r?\n/)){try{const event=JSON.parse(line);if(event.type==='turn.failed'||event.type==='error')turnFailed=true}catch{}}
   const expected=path.join(dir,'presentation.'+r.format);let exists=false;try{exists=(await fs.stat(expected)).size>0}catch{}
-  job.status=!error&&code===0&&!turnFailed&&exists?'completed':'failed';
+  let integrityError='';
+  if(exists&&r.format==='pptx'){try{const {default:checker}=await import('./pptx-integrity.cjs');const report=await checker.inspectPptx(expected);await fs.writeFile(path.join(dir,'pptx-integrity.json'),JSON.stringify(report,null,2));if(!report.valid)integrityError='PPTX 結構檢查失敗：'+report.errors.join('; ');}catch(e){integrityError='PPTX 無法驗證：'+e.message;}}
+  job.status=!error&&code===0&&!turnFailed&&exists&&!integrityError?'completed':'failed';
   let detail='';try{detail=(await fs.readFile(path.join(dir,'agent-result.md'),'utf8')).slice(0,1200)}catch{}
-  job.error=job.status==='failed'?(error||(!exists?'未產生 presentation.'+r.format+'。'+detail:'Codex 工作失敗，請查看工作紀錄。')):undefined;
+  job.error=job.status==='failed'?(error||integrityError||(!exists?'未產生 presentation.'+r.format+'。'+(detail||('Codex 結束代碼 '+code+'；請查看本機工作目錄的 stderr.log。')):'Codex 工作失敗，請查看工作紀錄。')):undefined;
   job.message=job.status==='completed'?'已產生成品，請查看 agent-result.md 的驗收範圍後下載。':undefined;
   await fs.writeFile(path.join(dir,'events.jsonl'),events);await fs.writeFile(path.join(dir,'stderr.log'),stderr);
   if(active===id)active=null;
@@ -50,7 +52,7 @@ const server=http.createServer(async(req,res)=>{try{
  const url=new URL(req.url,origin);
  if(req.headers.origin&&req.headers.origin!==origin){json(res,403,{error:'Origin 不允許'});return}
  res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
- if(url.pathname==='/api/session'&&req.method==='GET'){json(res,200,{mode:'local-codex',token});return}
+ if(url.pathname==='/api/session'&&req.method==='GET'){json(res,200,{mode:'local-codex',approvalMode:'auto-review',token});return}
  if(url.pathname.startsWith('/api/')){
   if(!allowed(req,url)){json(res,403,{error:'本機工作憑證不正確'});return}
   if(url.pathname==='/api/jobs'&&req.method==='POST'){

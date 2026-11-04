@@ -1,15 +1,16 @@
 {
   "name": "presentation-slides-skill-bear",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "smoke:pptx": "node scripts/smoke-pptx.cjs",
     "start": "node scripts/studio-server.mjs",
-    "test": "node --test tests/request.test.mjs tests/server.test.mjs"
+    "test": "node --test tests/request.test.mjs tests/server.test.mjs tests/pptx-integrity.test.mjs"
   },
   "dependencies": {
     "pptxgenjs": "4.0.1",
     "reveal.js": "5.2.1",
-    "playwright": "1.59.1"
+    "playwright": "1.59.1",
+    "jszip": "3.10.1"
   }
 }
