@@ -1,0 +1,662 @@
+[
+  {
+    "id": "minimal",
+    "name": "極簡留白",
+    "group": "清楚專業",
+    "background": "#faf9f5",
+    "ink": "#222c35",
+    "accent": "#24735b",
+    "layout": "split",
+    "font": "sans",
+    "description": "留白與單一視覺焦點",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/minimal-cover.svg",
+      "previews/minimal-content.svg",
+      "previews/minimal-diagram.svg"
+    ]
+  },
+  {
+    "id": "swiss",
+    "name": "瑞士網格",
+    "group": "清楚專業",
+    "background": "#f8f5ed",
+    "ink": "#17212b",
+    "accent": "#df3b31",
+    "layout": "grid",
+    "font": "sans",
+    "description": "明確網格、大字與紅色節點",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/swiss-cover.svg",
+      "previews/swiss-content.svg",
+      "previews/swiss-diagram.svg"
+    ]
+  },
+  {
+    "id": "corporate",
+    "name": "企業報告",
+    "group": "清楚專業",
+    "background": "#f4f7fb",
+    "ink": "#182d4a",
+    "accent": "#3164bd",
+    "layout": "band",
+    "font": "sans",
+    "description": "清楚章節與比較圖表",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/corporate-cover.svg",
+      "previews/corporate-content.svg",
+      "previews/corporate-diagram.svg"
+    ]
+  },
+  {
+    "id": "academic",
+    "name": "學術研究",
+    "group": "清楚專業",
+    "background": "#fffffb",
+    "ink": "#283546",
+    "accent": "#7f395c",
+    "layout": "editorial",
+    "font": "serif",
+    "description": "論點、證據與來源分層",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/academic-cover.svg",
+      "previews/academic-content.svg",
+      "previews/academic-diagram.svg"
+    ]
+  },
+  {
+    "id": "consulting",
+    "name": "顧問提案",
+    "group": "清楚專業",
+    "background": "#f6f8fa",
+    "ink": "#163140",
+    "accent": "#009b8d",
+    "layout": "dashboard",
+    "font": "sans",
+    "description": "結論式標題與分析圖",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/consulting-cover.svg",
+      "previews/consulting-content.svg",
+      "previews/consulting-diagram.svg"
+    ]
+  },
+  {
+    "id": "monochrome",
+    "name": "黑白高對比",
+    "group": "清楚專業",
+    "background": "#ffffff",
+    "ink": "#121212",
+    "accent": "#555555",
+    "layout": "poster",
+    "font": "sans",
+    "description": "文字比例形成層級",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/monochrome-cover.svg",
+      "previews/monochrome-content.svg",
+      "previews/monochrome-diagram.svg"
+    ]
+  },
+  {
+    "id": "editorial",
+    "name": "雜誌編排",
+    "group": "編輯敘事",
+    "background": "#f5eee2",
+    "ink": "#2c2522",
+    "accent": "#b74b35",
+    "layout": "editorial",
+    "font": "serif",
+    "description": "欄線、引言與不對稱版面",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/editorial-cover.svg",
+      "previews/editorial-content.svg",
+      "previews/editorial-diagram.svg"
+    ]
+  },
+  {
+    "id": "poster",
+    "name": "大字海報",
+    "group": "編輯敘事",
+    "background": "#f6e54b",
+    "ink": "#1a1a1a",
+    "accent": "#b92e35",
+    "layout": "poster",
+    "font": "sans",
+    "description": "以一句核心訊息佔據畫面",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/poster-cover.svg",
+      "previews/poster-content.svg",
+      "previews/poster-diagram.svg"
+    ]
+  },
+  {
+    "id": "photo",
+    "name": "影像敘事",
+    "group": "編輯敘事",
+    "background": "#15252c",
+    "ink": "#f5f6f2",
+    "accent": "#e5b660",
+    "layout": "photo",
+    "font": "sans",
+    "description": "大圖與簡短註解；預覽為原創示意",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/photo-cover.svg",
+      "previews/photo-content.svg",
+      "previews/photo-diagram.svg"
+    ]
+  },
+  {
+    "id": "timeline",
+    "name": "歷史時間軸",
+    "group": "編輯敘事",
+    "background": "#f5efe2",
+    "ink": "#45362b",
+    "accent": "#a55736",
+    "layout": "timeline",
+    "font": "serif",
+    "description": "事件節點與脈絡比較",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/timeline-cover.svg",
+      "previews/timeline-content.svg",
+      "previews/timeline-diagram.svg"
+    ]
+  },
+  {
+    "id": "newspaper",
+    "name": "報紙專題",
+    "group": "編輯敘事",
+    "background": "#f3f0e7",
+    "ink": "#242321",
+    "accent": "#974938",
+    "layout": "editorial",
+    "font": "serif",
+    "description": "多欄結構與資料註解",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/newspaper-cover.svg",
+      "previews/newspaper-content.svg",
+      "previews/newspaper-diagram.svg"
+    ]
+  },
+  {
+    "id": "museum",
+    "name": "博物館展覽",
+    "group": "編輯敘事",
+    "background": "#ede7db",
+    "ink": "#273a38",
+    "accent": "#98723f",
+    "layout": "gallery",
+    "font": "serif",
+    "description": "作品留白與策展標籤",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/museum-cover.svg",
+      "previews/museum-content.svg",
+      "previews/museum-diagram.svg"
+    ]
+  },
+  {
+    "id": "infographic",
+    "name": "圖解教材",
+    "group": "教育學習",
+    "background": "#f4faf7",
+    "ink": "#203d45",
+    "accent": "#168872",
+    "layout": "diagram",
+    "font": "sans",
+    "description": "視覺關係、編號與箭頭",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/infographic-cover.svg",
+      "previews/infographic-content.svg",
+      "previews/infographic-diagram.svg"
+    ]
+  },
+  {
+    "id": "whiteboard",
+    "name": "白板手繪",
+    "group": "教育學習",
+    "background": "#fffef9",
+    "ink": "#293e4a",
+    "accent": "#bc5838",
+    "layout": "sketch",
+    "font": "sans",
+    "description": "手繪線條協助推理",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/whiteboard-cover.svg",
+      "previews/whiteboard-content.svg",
+      "previews/whiteboard-diagram.svg"
+    ]
+  },
+  {
+    "id": "notebook",
+    "name": "筆記手帳",
+    "group": "教育學習",
+    "background": "#fffbed",
+    "ink": "#34414b",
+    "accent": "#426eb5",
+    "layout": "notebook",
+    "font": "sans",
+    "description": "橫線、註記與重點框",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/notebook-cover.svg",
+      "previews/notebook-content.svg",
+      "previews/notebook-diagram.svg"
+    ]
+  },
+  {
+    "id": "math",
+    "name": "數學方格",
+    "group": "教育學習",
+    "background": "#f4f7fc",
+    "ink": "#253b60",
+    "accent": "#ce5d32",
+    "layout": "grid",
+    "font": "sans",
+    "description": "方格、座標與結構化推導",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/math-cover.svg",
+      "previews/math-content.svg",
+      "previews/math-diagram.svg"
+    ]
+  },
+  {
+    "id": "language",
+    "name": "語文閱讀",
+    "group": "教育學習",
+    "background": "#f8f2e9",
+    "ink": "#493637",
+    "accent": "#92574b",
+    "layout": "editorial",
+    "font": "serif",
+    "description": "重點句、語意關係與文本比較",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/language-cover.svg",
+      "previews/language-content.svg",
+      "previews/language-diagram.svg"
+    ]
+  },
+  {
+    "id": "workshop",
+    "name": "工作坊便利貼",
+    "group": "教育學習",
+    "background": "#f2f1e9",
+    "ink": "#293c39",
+    "accent": "#b7712b",
+    "layout": "sticky",
+    "font": "sans",
+    "description": "任務步驟與可操作提問",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/workshop-cover.svg",
+      "previews/workshop-content.svg",
+      "previews/workshop-diagram.svg"
+    ]
+  },
+  {
+    "id": "storybook",
+    "name": "繪本插畫",
+    "group": "溫暖趣味",
+    "background": "#fff3de",
+    "ink": "#473c37",
+    "accent": "#bc6549",
+    "layout": "organic",
+    "font": "serif",
+    "description": "角色與場景式敘事",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/storybook-cover.svg",
+      "previews/storybook-content.svg",
+      "previews/storybook-diagram.svg"
+    ]
+  },
+  {
+    "id": "collage",
+    "name": "紙張拼貼",
+    "group": "溫暖趣味",
+    "background": "#eee2d0",
+    "ink": "#303d36",
+    "accent": "#bc5436",
+    "layout": "collage",
+    "font": "sans",
+    "description": "紙張層次與不規則構圖",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/collage-cover.svg",
+      "previews/collage-content.svg",
+      "previews/collage-diagram.svg"
+    ]
+  },
+  {
+    "id": "pastel",
+    "name": "柔和粉彩",
+    "group": "溫暖趣味",
+    "background": "#fff6f4",
+    "ink": "#493d52",
+    "accent": "#925389",
+    "layout": "organic",
+    "font": "sans",
+    "description": "柔和色塊、清楚文字對比",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/pastel-cover.svg",
+      "previews/pastel-content.svg",
+      "previews/pastel-diagram.svg"
+    ]
+  },
+  {
+    "id": "retro",
+    "name": "復古印刷",
+    "group": "溫暖趣味",
+    "background": "#f4dfae",
+    "ink": "#3d352d",
+    "accent": "#ac4630",
+    "layout": "band",
+    "font": "serif",
+    "description": "套色效果與復古比例",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/retro-cover.svg",
+      "previews/retro-content.svg",
+      "previews/retro-diagram.svg"
+    ]
+  },
+  {
+    "id": "nature",
+    "name": "自然質感",
+    "group": "溫暖趣味",
+    "background": "#f7f5e9",
+    "ink": "#293c31",
+    "accent": "#477a51",
+    "layout": "organic",
+    "font": "sans",
+    "description": "自然曲線與暖白空間",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/nature-cover.svg",
+      "previews/nature-content.svg",
+      "previews/nature-diagram.svg"
+    ]
+  },
+  {
+    "id": "technology",
+    "name": "深色科技",
+    "group": "科技數據",
+    "background": "#101e32",
+    "ink": "#edf6ff",
+    "accent": "#4dc6dc",
+    "layout": "grid",
+    "font": "sans",
+    "description": "清楚的系統架構與節點",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/technology-cover.svg",
+      "previews/technology-content.svg",
+      "previews/technology-diagram.svg"
+    ]
+  },
+  {
+    "id": "blueprint",
+    "name": "工程藍圖",
+    "group": "科技數據",
+    "background": "#173657",
+    "ink": "#f1f8ff",
+    "accent": "#9ad6e6",
+    "layout": "blueprint",
+    "font": "mono",
+    "description": "尺寸線與流程結構",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/blueprint-cover.svg",
+      "previews/blueprint-content.svg",
+      "previews/blueprint-diagram.svg"
+    ]
+  },
+  {
+    "id": "dashboard",
+    "name": "數據儀表板",
+    "group": "科技數據",
+    "background": "#f2f5fb",
+    "ink": "#26344b",
+    "accent": "#526cc5",
+    "layout": "dashboard",
+    "font": "sans",
+    "description": "指標、趨勢與比較圖",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/dashboard-cover.svg",
+      "previews/dashboard-content.svg",
+      "previews/dashboard-diagram.svg"
+    ]
+  },
+  {
+    "id": "terminal",
+    "name": "終端機",
+    "group": "科技數據",
+    "background": "#14251e",
+    "ink": "#e2efdf",
+    "accent": "#83c48c",
+    "layout": "terminal",
+    "font": "mono",
+    "description": "命令、步驟與程式碼",
+    "density": "中",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/terminal-cover.svg",
+      "previews/terminal-content.svg",
+      "previews/terminal-diagram.svg"
+    ]
+  },
+  {
+    "id": "geometric",
+    "name": "幾何構成",
+    "group": "藝術表現",
+    "background": "#eeeae5",
+    "ink": "#1f303e",
+    "accent": "#c95235",
+    "layout": "geometric",
+    "font": "sans",
+    "description": "圓、線與留白的比例",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/geometric-cover.svg",
+      "previews/geometric-content.svg",
+      "previews/geometric-diagram.svg"
+    ]
+  },
+  {
+    "id": "brutalist",
+    "name": "粗獷排版",
+    "group": "藝術表現",
+    "background": "#f6f248",
+    "ink": "#171717",
+    "accent": "#df4035",
+    "layout": "brutalist",
+    "font": "sans",
+    "description": "粗框、硬邊與高對比",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/brutalist-cover.svg",
+      "previews/brutalist-content.svg",
+      "previews/brutalist-diagram.svg"
+    ]
+  },
+  {
+    "id": "pixel",
+    "name": "像素復古",
+    "group": "藝術表現",
+    "background": "#23263e",
+    "ink": "#faf3d8",
+    "accent": "#efae5a",
+    "layout": "pixel",
+    "font": "mono",
+    "description": "方塊網格與遊戲式節點",
+    "density": "低",
+    "motion": "輕量",
+    "formats": [
+      "html",
+      "pptx"
+    ],
+    "previews": [
+      "previews/pixel-cover.svg",
+      "previews/pixel-content.svg",
+      "previews/pixel-diagram.svg"
+    ]
+  }
+]
