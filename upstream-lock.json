@@ -1,0 +1,50 @@
+{
+  "created": "2026-11-04",
+  "repositories": [
+    {
+      "name": "impeccable",
+      "repository": "https://github.com/pbakaus/impeccable",
+      "commit": "9fadc41729c38fd47d7ae622b501558653f9d2e9",
+      "source": "https://github.com/pbakaus/impeccable/tree/9fadc41729c38fd47d7ae622b501558653f9d2e9",
+      "skill_path": ".agents/skills/impeccable",
+      "license": "Apache-2.0",
+      "installed_skill": null,
+      "bundled_skill": "upstream/impeccable"
+    },
+    {
+      "name": "frontend-slides",
+      "repository": "https://github.com/zarazhangrui/frontend-slides",
+      "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+      "source": "https://github.com/zarazhangrui/frontend-slides/tree/9906a34d640d2111f724544cbc50f7f130569ae1",
+      "skill_path": ".",
+      "license": "MIT",
+      "installed_skill": null,
+      "bundled_skill": "upstream/frontend-slides"
+    },
+    {
+      "name": "revealjs-skill",
+      "repository": "https://github.com/ryanbbrown/revealjs-skill",
+      "commit": "d0ccd344c4aaf9f045e5a15be6a2ab67b595796f",
+      "source": "https://github.com/ryanbbrown/revealjs-skill/tree/d0ccd344c4aaf9f045e5a15be6a2ab67b595796f",
+      "skill_path": "skills/revealjs",
+      "license": "MIT",
+      "installed_skill": null,
+      "bundled_skill": "upstream/revealjs-skill"
+    },
+    {
+      "name": "PptxGenJS",
+      "repository": "https://github.com/gitbrent/PptxGenJS",
+      "commit": "3c9ec1b687c174952166f6a34b5e87ebf69fa469",
+      "source": "https://github.com/gitbrent/PptxGenJS/tree/3c9ec1b687c174952166f6a34b5e87ebf69fa469",
+      "skill_path": null,
+      "license": "MIT",
+      "installed_skill": null
+    }
+  ],
+  "npm": {
+    "pptxgenjs": "4.0.1",
+    "reveal.js": "5.2.1",
+    "playwright": "1.59.1"
+  },
+  "impeccable_engine": "0.1.18"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "presentation-slides-skill-bear",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "smoke:pptx": "node scripts/smoke-pptx.cjs"
+  },
+  "dependencies": {
+    "pptxgenjs": "4.0.1",
+    "reveal.js": "5.2.1",
+    "playwright": "1.59.1"
+  }
+}

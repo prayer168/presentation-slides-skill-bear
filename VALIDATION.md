@@ -1,0 +1,11 @@
+# 安裝與驗證紀錄（2026-11-04）
+- 四個 repo 已 clone 到 vendor，commit 鎖定於 upstream-lock.json，未修改上游。
+- Codex 已安裝 impeccable、frontend-slides、revealjs、presentation-slides-skill-bear。
+- PptxGenJS 4.0.1、Reveal.js 5.2.1、Playwright 1.59.1 已安裝於本機整合 skill；npm lock 保留完整相依版本。
+- Impeccable skill 4.8.0 launcher 啟動成功，engine 快取版本 0.1.18。
+- 工作區與已安裝版皆通過 quick_validate.py（UTF-8 模式）。
+- 三頁 Reveal.js 測試檔通過頁面錯誤、資源失敗、圖片與溢位檢查；三張截圖已逐頁視覺查看。
+- 一頁 PPTX 成功產生，ZIP 結構確認原生文字與講者筆記；本機 PowerPoint 成功匯出 PNG，畫面已查看。
+- Frontend Slides 的核心 SKILL、viewport-base.css 與模板已安裝；本次未另製作 Frontend Slides 引擎的獨立測試簡報。
+- 本次為引擎與技能整合驗證，非完整正式教學簡報或模型行為評測；Claude Code、Antigravity 尚未安裝實測。
+- Google Drive npm 解壓曾出現 EBADF，依賴改裝於本機 Codex 技能目錄；ZIP 不含 node_modules，使用時 npm ci --ignore-scripts。

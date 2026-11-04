@@ -1,0 +1,6 @@
+interface:
+  display_name: "黑熊老師簡報製作"
+  short_description: "製作黑熊老師的繁中教學與研習簡報，整合視覺設計、去制式感及逐頁驗收"
+  default_prompt: "使用 $presentation-slides-skill-bear，製作內容清楚、版面有節奏的繁體中文簡報。"
+policy:
+  allow_implicit_invocation: true
