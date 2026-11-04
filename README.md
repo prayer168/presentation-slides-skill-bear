@@ -12,7 +12,9 @@ npm ci --ignore-scripts
 npm start
 ```
 
-3. 開啟 **http://127.0.0.1:4318/ui/**。
+3. 開啟 [本機簡報工作室](http://127.0.0.1:4318/ui/)（請保持 `npm start` 執行）。
+
+只想預覽風格或匯出需求，可直接開啟[公開版簡報工作室](https://prayer168.github.io/presentation-slides-skill-bear/ui/)。
 
 Windows 建議用本機磁碟安裝 npm 依賴；Google Drive 虛擬磁碟可能解壓失敗。
 
