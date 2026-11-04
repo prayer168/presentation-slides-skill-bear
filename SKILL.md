@@ -2,7 +2,7 @@
 name: presentation-slides-skill-bear
 description: 跨國小、國中、高中、大學與專業領域製作或修改簡報；先收集 HTML／PPTX、目的與風格，再用視覺圖解、適當互動及逐頁驗收完成交付，附可點選需求表單與 30 套風格預覽。
 metadata:
-  version: 2.0.1
+  version: 2.0.2
 ---
 # 黑熊老師跨領域簡報技能
 

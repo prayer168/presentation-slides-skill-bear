@@ -1,4 +1,4 @@
-export const VERSION='2.0.1';
+export const VERSION='2.0.2';
 export function validateRequest(raw, styles) {
  const r={version:VERSION};
  for(const key of ['format','purpose','audience','subject','topic','goal','style','density','interaction','notes','materials']) {
