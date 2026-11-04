@@ -40,11 +40,12 @@ async function startJob(r){
   const expected=path.join(dir,'presentation.'+r.format);let exists=false;try{exists=(await fs.stat(expected)).size>0}catch{}
   let integrityError='';
   if(exists&&r.format==='pptx'){try{const {default:checker}=await import('./pptx-integrity.cjs');const report=await checker.inspectPptx(expected);await fs.writeFile(path.join(dir,'pptx-integrity.json'),JSON.stringify(report,null,2));if(!report.valid)integrityError='PPTX 結構檢查失敗：'+report.errors.join('; ');}catch(e){integrityError='PPTX 無法驗證：'+e.message;}}
-  job.status=!error&&code===0&&!turnFailed&&exists&&!integrityError?'completed':'failed';
+  const finalStatus=!error&&code===0&&!turnFailed&&exists&&!integrityError?'completed':'failed';
   let detail='';try{detail=(await fs.readFile(path.join(dir,'agent-result.md'),'utf8')).slice(0,1200)}catch{}
-  job.error=job.status==='failed'?(error||integrityError||(!exists?'未產生 presentation.'+r.format+'。'+(detail||('Codex 結束代碼 '+code+'；請查看本機工作目錄的 stderr.log。')):'Codex 工作失敗，請查看工作紀錄。')):undefined;
-  job.message=job.status==='completed'?'已產生成品，請查看 agent-result.md 的驗收範圍後下載。':undefined;
+  job.error=finalStatus==='failed'?(error||integrityError||(!exists?'未產生 presentation.'+r.format+'。'+(detail||('Codex 結束代碼 '+code+'；請查看本機工作目錄的 stderr.log。')):'Codex 工作失敗，請查看工作紀錄。')):undefined;
+  job.message=finalStatus==='completed'?'已產生成品，請查看 agent-result.md 的驗收範圍後下載。':undefined;
   await fs.writeFile(path.join(dir,'events.jsonl'),events);await fs.writeFile(path.join(dir,'stderr.log'),stderr);
+  job.status=finalStatus;
   if(active===id)active=null;delete job.child;delete job.cancel;
  }
  const timer=setTimeout(()=>{child.kill();void finish(null,'工作超過 30 分鐘；已停止此程序，現有檔案保留。')},30*60*1000);
