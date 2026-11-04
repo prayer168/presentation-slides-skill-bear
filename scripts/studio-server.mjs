@@ -13,6 +13,9 @@ const host='127.0.0.1',port=Number(process.env.BEAR_PORT||4318),origin=`http://$
 const token=crypto.randomBytes(32).toString('hex'),jobs=new Map();
 const outputRoot=path.resolve(process.env.BEAR_OUTPUT_DIR||path.join(root,'output'));
 const codex=process.env.CODEX_BIN||'codex';
+// Optional executable argument prefix for local test drivers; never accepted over HTTP.
+const codexPrefix=JSON.parse(process.env.CODEX_PREFIX_ARGS||'[]');
+if(!Array.isArray(codexPrefix)||codexPrefix.some(a=>typeof a!=='string'))throw Error('CODEX_PREFIX_ARGS 必須是字串陣列');
 let active=null;
 const mime={'.js':'text/javascript; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.md':'text/plain; charset=utf-8'};
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data))}
@@ -28,7 +31,7 @@ async function startJob(r){
  const job={id,dir,attachments:attachmentReport.map(({text,...a})=>a),status:'running',message:'Codex 正在製作；完成後仍須查看驗收結果。'};jobs.set(id,job);active=id;
  const args=['exec','--json','--approve-for-me','--skip-git-repo-check','-C',dir,'-o',path.join(dir,'agent-result.md'),'-'];
  let turnFailed=false,finished=false,events='',stderr='';
- const child=spawn(codex,args,{shell:false,windowsHide:true,stdio:['pipe','pipe','pipe']});
+ const child=spawn(codex,[...codexPrefix,...args],{shell:false,windowsHide:true,stdio:['pipe','pipe','pipe']});
  job.child=child;
  child.stdout.on('data',chunk=>{events+=chunk.toString();if(events.length>2000000)events=events.slice(-2000000)});
  child.stderr.on('data',chunk=>{stderr+=chunk.toString();if(stderr.length>20000)stderr=stderr.slice(-20000)});
@@ -42,11 +45,12 @@ async function startJob(r){
   job.error=job.status==='failed'?(error||integrityError||(!exists?'未產生 presentation.'+r.format+'。'+(detail||('Codex 結束代碼 '+code+'；請查看本機工作目錄的 stderr.log。')):'Codex 工作失敗，請查看工作紀錄。')):undefined;
   job.message=job.status==='completed'?'已產生成品，請查看 agent-result.md 的驗收範圍後下載。':undefined;
   await fs.writeFile(path.join(dir,'events.jsonl'),events);await fs.writeFile(path.join(dir,'stderr.log'),stderr);
-  if(active===id)active=null;
+  if(active===id)active=null;delete job.child;delete job.cancel;
  }
  const timer=setTimeout(()=>{child.kill();void finish(null,'工作超過 30 分鐘；已停止此程序，現有檔案保留。')},30*60*1000);
  child.on('error',e=>void finish(null,'無法啟動 Codex：'+e.message+'。請確認 codex login 與 CODEX_BIN 設定。'));
  child.on('close',code=>void finish(code));child.stdin.on('error',()=>{});
+ job.cancel=async()=>{const done=finish(null,'工作已由驗收流程停止；現有檔案保留。');child.kill();await done;};
  child.stdin.end(prompt+'\n最終簡報主檔必須命名為 presentation.'+r.format+'。');
  return job;
 }
@@ -65,6 +69,8 @@ const server=http.createServer(async(req,res)=>{try{
    // Reserve before awaiting filesystem work so simultaneous submissions cannot both start.
    active='starting';try{const job=await startJob(r);json(res,202,{id:job.id,status:job.status})}catch(e){active=null;throw e}return;
   }
+  const cancelMatch=url.pathname.match(/^\/api\/jobs\/([a-f0-9-]+)\/cancel$/);
+  if(cancelMatch&&req.method==='POST'){const job=jobs.get(cancelMatch[1]);if(!job){json(res,404,{error:'找不到工作'});return}if(job.cancel)await job.cancel();json(res,200,await snapshot(job));return}
   const match=url.pathname.match(/^\/api\/jobs\/([a-f0-9-]+)(?:\/files\/(.+))?$/);
   const job=match&&jobs.get(match[1]);if(!job){json(res,404,{error:'找不到工作；伺服器重新啟動後可從本機輸出資料夾取回檔案。'});return}
   if(req.method!=='GET'){json(res,405,{error:'不支援此操作'});return}

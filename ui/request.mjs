@@ -1,5 +1,5 @@
 import {validateAttachments,attachmentMetadata} from './attachments.mjs';
-export const VERSION='2.1.0';
+export const VERSION='2.2.0';
 export function validateRequest(raw, styles) {
  const r={version:VERSION};
  for(const key of ['format','purpose','audience','subject','topic','goal','style','density','interaction','notes','materials']) {

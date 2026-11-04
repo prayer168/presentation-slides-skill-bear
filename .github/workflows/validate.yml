@@ -12,3 +12,6 @@ jobs:
       - run: npm test
       - run: node --check scripts/studio-server.mjs
       - run: node --check ui/app.mjs
+      - run: node --check scripts/acceptance.mjs
+      - run: node --check scripts/acceptance-checks.mjs
+      - run: node --check scripts/acceptance-verify.mjs

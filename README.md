@@ -1,4 +1,4 @@
-# 黑熊老師跨領域簡報工作室 · v2.1.0
+# 黑熊老師跨領域簡報工作室 · v2.2.0
 
 從國小、國中、高中到大學與專業場合，適用語文、數學、社會、藝術、科學、工程、商業等領域。先選格式、目的與風格，再製作視覺化簡報。
 
@@ -60,3 +60,6 @@ node scripts/test-studio.cjs http://127.0.0.1:4318 verification-output/ui
 
 ## 多格式附件
 支援 PNG、JPG、JPEG、WebP、PDF、DOCX、PPTX、XLSX、CSV、TXT、MD；多檔選取或拖曳，每檔指定用途。最多 10 個、每檔 10 MB、總量 30 MB。本機保存原檔並產生解析紀錄；靜態頁使用包含原檔的 ZIP 交接。掃描 PDF 不自動 OCR，Office 版面及圖像另需檢查。詳見 [附件處理](references/attachments.md)。
+
+## 可重複驗收
+`npm run acceptance` 跑固定產物管線；`npm run acceptance:live` 真正各製作一次 HTML／PPTX；`npm run acceptance:verify -- --run "既有驗收目錄"` 不叫模型只重驗。報告、逐頁畫面與簡報保留在每次獨立資料夾。[操作及檢查邊界](references/acceptance.md)。
